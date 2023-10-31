@@ -1,0 +1,80 @@
+-- ex 1
+SELECT id_functie,
+    COUNT(id_angajat)
+FROM angajati
+GROUP BY id_functie;
+-- ex 2
+SELECT id_departament,
+    id_functie,
+    COUNT(id_angajat)
+FROM angajati
+GROUP BY id_departament,
+    id_functie;
+-- ex 3
+SELECT id_departament,
+    ROUND(AVG(salariul))
+FROM angajati
+GROUP BY id_departament
+HAVING id_departament IN (60, 70, 80);
+-- ex 4
+SELECT user,
+    sysdate,
+    'omar'
+FROM dual;
+-- ex 5
+DESCRIBE comenzi;
+DESCRIBE rand_comenzi;
+SELECT id_comanda,
+    COUNT(id_produs)
+FROM rand_comenzi
+GROUP BY id_comanda;
+DESCRIBE rand_comenzi;
+-- 6. Să se afișeze id-ul comenzii și valoarea totală pentru fiecare dintre acestea.
+SELECT *
+FROM rand_comenzi
+ORDER BY ID_COMANDA;
+SELECT id_comanda,
+    SUM(pret * cantitate) as valoare
+FROM rand_comenzi
+GROUP BY id_comanda;
+-- 7. Să se afișeze id-ul produsului și cantitatea totală comandată pentru fiecare produs.
+SELECT id_produs,
+    SUM(cantitate)
+FROM rand_comenzi
+GROUP BY id_produs;
+-- 8. Să se afișeze id-ul și valoarea totală pentru fiecare dintre comenzile care conțin mai mult de 5 produse distincte. Ordonați descendent în funcție de valoarea comenzilor.
+SELECT id_comanda,
+    SUM(pret * cantitate) as valoare,
+    COUNT(id_produs) as nr_prod
+FROM rand_comenzi
+GROUP BY id_comanda
+HAVING COUNT(id_produs) > 5;
+-- 9. Să se afișeze id-ul angajaților care și-au schimbat funcția cel puțin de două ori.
+SELECT *
+FROM istoric_functii;
+DESCRIBE istoric_functii;
+SELECT id_angajat,
+    COUNT(id_functie)
+FROM istoric_functii
+GROUP BY id_angajat
+HAVING COUNT(id_functie) >= 2;
+-- 10. Să se afișeze cel mai mare salariu mediu per departament.
+SELECT id_departament,
+    AVG(salariul)
+FROM angajati
+GROUP BY id_departament;
+-- 11. Să se modifice salariul angajaților cu funcția IT_PROG astfel încât să devină egal cu salariul angajatului 204.
+UPDATE angajati
+SET salariul = (
+        SELECT salariul
+        FROM angajati
+        WHERE id_angajat = 204
+    )
+WHERE LOWER(id_functie) LIKE '%it_prog%';
+SELECT id_angajat
+FROM (
+        SELECT id_angajat,
+            id_departament
+        FROM angajati
+        WHERE LOWER(id_functie) in ('it_prog', 'sa_man')
+    );
